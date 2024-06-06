@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package IoT;
+
+import "google/protobuf/empty.proto";
+
+service DeviceService {
+	rpc GetDeviceInformation (google.protobuf.Empty) returns (DeviceInfo);
+}
+
+enum DeviceHealthCheck {
+	NONE = 0;
+	PULL = 1;
+	STREAM = 2;
+	BOTH = 3;
+}
+
+message OutputTypes {
+	message Digital {}
+	message Analog {
+		int32 min_value = 1;
+		int32 max_value = 2;
+	}
+}
+
+message InputTypes {
+	message Digital {}
+	message Analog {
+		int32 min_value = 1;
+		int32 max_value = 2;
+	}
+}
+
+enum OutputMode {
+	NONE = 0;
+	PULL = 1;		// gRPC method invoke
+	STREAM = 2;		// gRPC stream
+	PUSH = 3;		// Set PUSH endpoint/queue
+}
+
+enum InputMode {
+	NONE = 0;
+	PULL = 1;		// read commands from queue
+	STREAM = 2;		// input stream
+	PUSH = 3;		// gRPC method invoke
+}
+
+message DeviceInfo {
+	string id = 1;
+	DeviceHealthCheck health_check = 2;
+	optional string name = 3;
+
+	message DeviceOutput {
+		uint32 index = 1;
+		optional string name = 2;
+		repeated OutputMode modes = 3;
+		oneof output_type {
+			OutputTypes.Digital digital = 101;
+			OutputTypes.Analog analog = 102;
+		}
+	}
+	repeated DeviceOutput outputs = 4;
+	
+	message DeviceInput {
+		uint32 index = 1;
+		optional string name = 2;
+		repeated InputMode modes = 3;
+		oneof input_type {
+			InputTypes.Digital digital = 101;
+			InputTypes.Analog analog = 102;
+		}
+	}
+	repeated DeviceInput inputs = 5;
+}
