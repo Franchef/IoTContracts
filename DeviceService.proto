@@ -31,24 +31,26 @@ message InputTypes {
 	}
 }
 
-enum OutputMode {
-	NONE = 0;
-	PULL = 1;		// gRPC method invoke
-	STREAM = 2;		// gRPC stream
-	PUSH = 3;		// Set PUSH endpoint/queue
-}
 
-enum InputMode {
-	NONE = 0;
-	PULL = 1;		// read commands from queue
-	STREAM = 2;		// input stream
-	PUSH = 3;		// gRPC method invoke
-}
 
 message DeviceInfo {
 	string id = 1;
 	DeviceHealthCheck health_check = 2;
 	optional string name = 3;
+
+	enum OutputMode {
+		UNREDEABLE = 0;
+		READ = 1;		// gRPC method invoke
+		READ_STREAM = 2;		// gRPC stream
+		PUSH_TO_BUS = 3;		// Set PUSH endpoint/queue
+	}
+
+	enum InputMode {
+		UNCOMMANDABLE = 0;
+		SELF_PULL = 1;		// read commands from queue
+		WRITE_STREAM = 2;		// input stream
+		INVOKE = 3;		// gRPC method invoke
+	}
 
 	message DeviceOutput {
 		uint32 index = 1;
