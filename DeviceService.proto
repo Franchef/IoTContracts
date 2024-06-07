@@ -6,6 +6,8 @@ import "google/protobuf/empty.proto";
 
 service DeviceService {
 	rpc GetDeviceInformation (google.protobuf.Empty) returns (DeviceInfo);
+	rpc ReadOutput (OutputReadRequest) returns (OutputValue);
+	rpc ReadOutputStream (OutputReadRequest) returns (stream OutputValue);
 }
 
 enum DeviceHealthCheck {
@@ -30,8 +32,22 @@ message InputTypes {
 		int32 max_value = 2;
 	}
 }
+message OutputReadRequest {
+	uint32 index = 1;
+}
 
-
+message OutputValue {
+	message DigitalValue {
+		bool value = 1;
+	}
+	message AnalogValue {
+		int32 value = 2;
+	}
+	oneof Value {
+		DigitalValue digital = 1;
+		AnalogValue analog = 2;
+	}
+}
 
 message DeviceInfo {
 	string id = 1;
